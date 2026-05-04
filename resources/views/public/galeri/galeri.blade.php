@@ -85,7 +85,7 @@
                 <h2 class="fw-bold mb-3" style="color: #1a1a1a; font-size: 2.5rem;">
                     Dokumentasi <span style="color: #0061ff;">Unit ICT</span>
                 </h2>
-                <p class="text-muted">Melihat lebih dekat kegiatan teknis, pemeliharaan infrastruktur, dan digitalisasi pelayanan di Politeknik Negeri Padang.</p>
+                <p class="text-muted">Melihat lebih dekat kegiatan teknis, pemeliharaan infrastruktur, dan digitalisasi pelayanan di Semen Padang.</p>
                 <hr class="mx-auto" style="width: 60px; height: 4px; background: #0061ff; border-radius: 10px; opacity: 1;">
             </div>
         </div>
