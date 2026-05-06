@@ -76,14 +76,14 @@
 
 /* --- DESKRIPSI (Teks di bawah judul) --- */
 .hero-desc {
-    /* Mengecilkan dari 1.25rem ke 1.1rem agar lebih nyaman dibaca */
-    font-size: 1.1rem; 
-    color: #636e72;
-    max-width: 650px; /* Memperpendek baris teks agar mata tidak lelah */
-    margin: 25px auto 0 auto;
-    line-height: 1.6;
-    font-weight: 400;
-}
+        /* Ukuran deskripsi disamakan dengan Beranda */
+        font-size: 1.35rem;
+        color: #636e72;
+        max-width: 750px;
+        margin: 0 auto;
+        line-height: 1.7;
+        font-weight: 400;
+    }
 
 /* --- JUDUL SEKSI (Contoh: Apa yang Bisa Kami Bantu?) --- */
 .title-secondary {

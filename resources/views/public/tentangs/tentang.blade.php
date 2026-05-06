@@ -25,7 +25,7 @@
         align-items: center; 
         justify-content: center; 
         /* Padding dan margin ditarik agar pas dengan navbar */
-        padding: 180px 0 100px 0; 
+        padding: 190px 0 100px 0; 
         margin-top: -75px; 
         background: linear-gradient(180deg, #f0f4ff 0%, #ffffff 100%);
         text-align: center; 

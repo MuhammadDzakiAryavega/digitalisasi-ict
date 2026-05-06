@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Unit ICT</title>
+    <title>Login - Unit IT</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;850&display=swap" rel="stylesheet">
@@ -83,7 +83,7 @@
 <div class="container d-flex justify-content-center">
     <div class="auth-card">
         <a href="{{ url('/') }}" class="brand-logo">
-            <i class="bi bi-cpu-fill me-2"></i> UNIT ICT
+            <i class="bi bi-cpu-fill me-2"></i> UNIT IT
         </a>
         
         <div class="text-center mb-4">

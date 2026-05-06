@@ -26,7 +26,7 @@
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 250px 0 100px 0; 
+        padding: 260px 0 100px 0; 
         background: linear-gradient(180deg, #f0f4ff 0%, #ffffff 100%);
         margin-top: -75px; 
         position: relative;

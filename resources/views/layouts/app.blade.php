@@ -106,7 +106,7 @@
             background-color: #0f172a; /* Biru gelap menyesuaikan tema IT */
             color: #cbd5e1;
             position: relative;
-            margin-top: 80px; /* Memberi ruang untuk banner melayang */
+            margin-top: 0px; /* Memberi ruang untuk banner melayang */
             padding-top: 60px;
         }
 
@@ -277,7 +277,7 @@
 </head>
 <body>
 
-    <!-- Navbar (Sama seperti sebelumnya) -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center me-4" href="{{ url('/') }}">
@@ -309,9 +309,10 @@
                                 <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Akun Saya</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <form action="{{ route('logout') }}" method="POST">
+                                    <!-- FORM LOGOUT DIUBAH DISINI -->
+                                    <form action="{{ route('logout') }}" method="POST" id="logout-form-front">
                                         @csrf
-                                        <button type="submit" class="dropdown-item text-danger d-flex align-items-center" style="border: none; background: none; width: 100%;">
+                                        <button type="button" onclick="confirmLogoutFront()" class="dropdown-item text-danger d-flex align-items-center" style="border: none; background: none; width: 100%;">
                                             <i class="bi bi-box-arrow-right me-2"></i> Logout
                                         </button>
                                     </form>
@@ -325,13 +326,12 @@
     </nav>
 
     <!-- Main Content -->
-    <main style="padding-top: 80px;"> <!-- Menambahkan padding atas agar konten tidak tertutup navbar fixed -->
+    <main style="padding-top: 80px;"> 
         @yield('content')
     </main>
 
-    <!-- FOOTER BARU -->
+    <!-- FOOTER -->
     <footer class="app-footer">
-
         <div class="container">
             <div class="row gy-5">
                 
@@ -423,6 +423,31 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- TAMBAHKAN SWEETALERT2 DISINI -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // FUNGSI KONFIRMASI LOGOUT
+        function confirmLogoutFront() {
+            Swal.fire({
+                title: 'Apakah anda yakin?',
+                text: "Sesi anda akan diakhiri!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#0061ff',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form-front').submit();
+                }
+            })
+        }
+    </script>
+
     @stack('scripts')
 </body>
 </html>
