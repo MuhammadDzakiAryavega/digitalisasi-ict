@@ -87,4 +87,32 @@ public function indexGaleri()
         $galeri->delete();
         return redirect()->route('admin.galeri.index')->with('success', 'Data dihapus!');
     }
+
+    public function show($id_kegiatan) {
+    // Cari data berdasarkan primary key (id_kegiatan)
+    $galeri = Galeri::findOrFail($id_kegiatan);
+    
+    // Tampilkan ke view detail.blade.php
+    return view('public.galeri.detail', compact('galeri'));
+    }
+
+    public function incrementViews($id)
+{
+    // 1. Cari data berdasarkan id_kegiatan (sesuai database kamu)
+    $galeri = \App\Models\Galeri::where('id_kegiatan', $id)->first();
+
+    if ($galeri) {
+        // 2. Tambah angka di kolom views
+        $galeri->increment('views'); 
+
+        // 3. Kirim respon balik ke JavaScript
+        return response()->json([
+            'success' => true,
+            'total_views' => $galeri->views
+        ]);
+    }
+
+    return response()->json(['success' => false], 404);
+}
+
 }

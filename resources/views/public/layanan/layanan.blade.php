@@ -5,7 +5,7 @@
 @push('styles')
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <style>
-    /* --- INTEGRASI STYLE GALERI (PEMBERSIH CELAH) --- */
+    /* --- INTEGRASI STYLE --- */
     main { padding-top: 0 !important; }
 
     .page-pengaduan {
@@ -13,7 +13,7 @@
         min-height: 100vh;
     }
 
-    /* --- HERO HEADER (IDENTIK DENGAN GALERI) --- */
+    /* --- HERO HEADER --- */
     .hero-header {
         padding: 180px 0 100px 0; 
         text-align: center;
@@ -50,14 +50,14 @@
         font-weight: 400;
     }
 
-    /* --- TAB NAVIGASI (OVERLAP STYLE) --- */
+    /* --- TAB NAVIGASI --- */
     .nav-toggle-container {
         display: flex; 
         background: white;
         border-radius: 20px; 
         padding: 8px;
         box-shadow: 0 15px 35px rgba(0,0,0,0.06); 
-        margin: -50px auto 50px auto; /* Membuat efek menempel ke hero */
+        margin: -50px auto 50px auto;
         position: relative;
         z-index: 10;
         max-width: 550px;
@@ -79,7 +79,7 @@
     .nav-toggle-btn.inactive { color: #64748b !important; }
     .nav-toggle-btn.inactive:hover { background-color: #f1f5f9; color: #0061ff !important; }
 
-    /* --- FORM CARD & INPUTS (STYLE ASLI YANG DIPERHALUS) --- */
+    /* --- FORM CARD & INPUTS --- */
     .custom-card { 
         background: #fff; border-radius: 30px; border: 1px solid #e2e8f0; 
         box-shadow: 0 25px 50px rgba(0,0,0,0.03); 
@@ -110,24 +110,27 @@
     .upload-zone { 
         border: 2px dashed #cbd5e0; border-radius: 20px; padding: 40px; 
         background-color: #f8fafc; transition: all 0.3s ease; 
+        position: relative;
     }
 
     .upload-zone:hover { border-color: #0061ff; background-color: #f0f7ff; }
+    
+    .upload-zone.is-invalid { border-color: #dc3545; }
 
     .btn-kirim { 
         background: linear-gradient(135deg, #0061ff 0%, #004ecc 100%); 
         border: none; border-radius: 18px; padding: 20px; 
         font-weight: 800; letter-spacing: 1px; transition: all 0.3s ease; 
+        color: white;
     }
 
-    .btn-kirim:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 97, 255, 0.4); }
+    .btn-kirim:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 97, 255, 0.4); color: white; }
 </style>
 @endpush
 
 @section('content')
 <div class="page-pengaduan">
     
-    {{-- HERO HEADER (IDENTIK GALERI) --}}
     <header class="hero-header" data-aos="fade-down">
         <div class="container">
             <h1 class="title-top">Layanan</h1>
@@ -142,19 +145,17 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 
-                {{-- TAB NAVIGASI --}}
                 <div class="nav-toggle-container" data-aos="fade-up" data-aos-delay="100">
                     <a href="{{ route('pengaduan.create') }}" 
                        class="nav-toggle-btn {{ Request::routeIs('pengaduan.create') ? 'active' : 'inactive' }}">
-                        <i class="bi bi-pencil-square"></i> Buat Pengaduan
+                        <i class="bi bi-pencil-square"></i> Buat Laporan
                     </a>
                     <a href="{{ route('pengaduan.index') }}" 
                        class="nav-toggle-btn {{ Request::routeIs('pengaduan.index') ? 'active' : 'inactive' }}">
-                        <i class="bi bi-clock-history"></i> Riwayat Pengaduan
+                        <i class="bi bi-clock-history"></i> Riwayat Laporan
                     </a>
                 </div>
 
-                {{-- FORM CARD --}}
                 <div class="card custom-card p-4 p-md-5 mb-5" data-aos="fade-up" data-aos-delay="200">
                     <form action="{{ route('pengaduan.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -176,7 +177,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold"><i class="bi bi-whatsapp me-1 text-success"></i> No. WhatsApp Aktif</label>
+                            <label class="form-label fw-bold"><i class="bi bi-whatsapp me-1 text-success"></i> No. WhatsApp Aktif <span class="text-danger">*</span></label>
                             <input type="text" name="no_hp_pengadu" class="form-control @error('no_hp_pengadu') is-invalid @enderror" placeholder="Contoh: 081234567890" value="{{ old('no_hp_pengadu') }}" required>
                             @error('no_hp_pengadu')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -191,7 +192,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Judul Kendala</label>
+                            <label class="form-label fw-bold">Judul Kendala <span class="text-danger">*</span></label>
                             <input type="text" name="judul_pengaduan" class="form-control @error('judul_pengaduan') is-invalid @enderror" placeholder="Misal: WiFi Lab Tidak Bisa Connect" value="{{ old('judul_pengaduan') }}" required>
                             @error('judul_pengaduan')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -199,24 +200,30 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Deskripsi Masalah</label>
+                            <label class="form-label fw-bold">Deskripsi Masalah <span class="text-danger">*</span></label>
                             <textarea name="isi_pengaduan" class="form-control @error('isi_pengaduan') is-invalid @enderror" rows="5" placeholder="Jelaskan secara detail kendala yang dialami..." required>{{ old('isi_pengaduan') }}</textarea>
                             @error('isi_pengaduan')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
+                        <!-- BAGIAN DOKUMENTASI (WAJIB) -->
                         <div class="mb-5">
-                            <label class="form-label fw-bold">Dokumentasi / Bukti (Opsional)</label>
-                            <div class="upload-zone text-center @error('url_lampiran') border-danger @enderror">
+                            <label class="form-label fw-bold">Dokumentasi / Bukti Kendala <span class="text-danger">*</span></label>
+                            <div class="upload-zone text-center @error('url_lampiran') is-invalid @enderror">
                                 <i class="bi bi-cloud-arrow-up fs-1 text-primary mb-2"></i>
-                                <input type="file" name="url_lampiran" class="form-control border-0 bg-transparent" accept="image/*,.pdf">
-                                <p class="small text-muted mt-2 mb-0">Drag & Drop atau klik untuk upload foto/PDF (Maks. 2MB)</p>
+                                <input type="file" name="url_lampiran" class="form-control border-0 bg-transparent @error('url_lampiran') is-invalid @enderror" accept="image/*,.pdf" required>
+                                <p class="small text-muted mt-2 mb-0">Klik untuk upload foto atau PDF bukti kendala</p>
+                                <p class="badge bg-soft-primary text-primary fw-normal mt-2">Wajib diisi (Maks. 2MB)</p>
+                                
+                                @error('url_lampiran')
+                                    <div class="text-danger small mt-2 d-block fw-bold">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-kirim btn-lg shadow-sm">
+                            <button type="submit" class="btn btn-kirim btn-lg shadow-sm">
                                 <i class="bi bi-send-check-fill me-2"></i> KIRIM LAPORAN SEKARANG
                             </button>
                         </div>

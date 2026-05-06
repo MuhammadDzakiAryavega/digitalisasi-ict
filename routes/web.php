@@ -23,6 +23,9 @@ Route::get('/tentang', function () {
     return view('public.tentangs.tentang'); 
 })->name('tentangs.tentang');
 
+Route::get('/galeri/{id_kegiatan}', [GaleriController::class, 'show'])->name('galeri.show');
+Route::post('/galeri/{id}/view', [GaleriController::class, 'incrementViews']);
+
 // --- 2. GUEST AREA (Login & Register) ---
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

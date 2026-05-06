@@ -237,7 +237,7 @@
                                 {{ Str::limit($galeri->deskripsi_singkat, 100) }}
                             </p>
                             <!-- Tombol Selengkapnya -->
-                            <a href="#" class="btn-detail">
+                            <a href="{{ route('galeri.show', $galeri->id_kegiatan) }}" class="btn-detail">
                                 Selengkapnya
                                 <i class="bi bi-arrow-right ms-1"></i>
                             </a>
