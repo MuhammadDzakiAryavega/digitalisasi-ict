@@ -192,7 +192,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Judul Kendala <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">Judul Bantuan/Kendala <span class="text-danger">*</span></label>
                             <input type="text" name="judul_pengaduan" class="form-control @error('judul_pengaduan') is-invalid @enderror" placeholder="Misal: WiFi Lab Tidak Bisa Connect" value="{{ old('judul_pengaduan') }}" required>
                             @error('judul_pengaduan')
                                 <div class="invalid-feedback">{{ $message }}</div>

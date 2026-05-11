@@ -9,18 +9,14 @@ class Pengaduan extends Model
 {
     use HasFactory;
 
-    // Nama tabel di database
     protected $table = 'pengaduans';
-
-    // Primary key yang kamu gunakan bukan 'id'
     protected $primaryKey = 'id_pengaduan';
 
-    // Kolom-kolom yang boleh diisi secara massal
     protected $fillable = [
         'nama_pengadu',
         'email_pengadu',
         'no_hp_pengadu',
-        'id_anggota',
+        // 'id_anggota', <-- Hapus ini dari fillable karena sudah pakai tabel pivot
         'judul_pengaduan',
         'isi_pengaduan',
         'tanggal_pengaduan',
@@ -29,17 +25,12 @@ class Pengaduan extends Model
     ];
 
     /**
-     * Relasi ke model Anggota
-     * Menghubungkan id_anggota di tabel pengaduans ke id_anggota di tabel anggotas
+     * Relasi ke model Anggota (Pivot)
      */
-    public function anggota()
-    {
-        return $this->belongsTo(Anggota::class, 'id_anggota', 'id_anggota');
+    public function anggotas() {
+        return $this->belongsToMany(Anggota::class, 'anggota_pengaduan', 'id_pengaduan', 'id_anggota');
     }
 
-    /**
-     * Casting tipe data agar lebih mudah diolah
-     */
     protected $casts = [
         'tanggal_pengaduan' => 'datetime',
         'created_at' => 'datetime',

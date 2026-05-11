@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // --- FITUR LAYANAN USER (Warga) ---
-    // Nama rute akan menjadi: pengaduan.index, pengaduan.store, dll.
+    // Nama rute otomatis diawali: pengaduan.
     Route::prefix('layanan')->name('pengaduan.')->group(function () {
         Route::get('/pengaduan', function () {
             return view('public.layanan.layanan');
@@ -49,10 +49,13 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/riwayat', [PengaduanController::class, 'index'])->name('index');
         Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('store');
+        
+        // PERBAIKAN: Menambahkan rute show agar route('pengaduan.show') bisa ditemukan
+        Route::get('/riwayat/{id}', [PengaduanController::class, 'show'])->name('show');
     });
 
     // --- AREA ADMIN ---
-    // Semua rute di bawah ini otomatis diawali dengan 'admin.' (contoh: admin.halamanutama)
+    // Nama rute otomatis diawali: admin.
     Route::prefix('admin')->name('admin.')->group(function () {
         
         // Dashboard Admin
@@ -69,7 +72,6 @@ Route::middleware('auth')->group(function () {
         });
 
         // Kelola Pengaduan Admin (admin.pengaduan.index)
-        // PERBAIKAN: Prefix cukup 'pengaduan' karena sudah di dalam prefix 'admin'
         Route::prefix('pengaduan')->name('pengaduan.')->group(function () {
             Route::get('/', [PengaduanController::class, 'indexAdmin'])->name('index');
             Route::get('/{id}', [PengaduanController::class, 'show'])->name('show');

@@ -5,7 +5,7 @@
 @push('styles')
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <style>
-    /* --- INTEGRASI STYLE GALERI (PEMBERSIH CELAH) --- */
+    /* --- INTEGRASI STYLE GALERI --- */
     main { padding-top: 0 !important; }
 
     .page-pengaduan {
@@ -13,7 +13,7 @@
         min-height: 100vh;
     }
 
-    /* --- HERO HEADER (IDENTIK DENGAN GALERI & FORM) --- */
+    /* --- HERO HEADER --- */
     .hero-header {
         padding: 180px 0 100px 0; 
         text-align: center;
@@ -50,7 +50,7 @@
         font-weight: 400;
     }
 
-    /* --- TAB NAVIGASI (IDENTIK DENGAN FORM) --- */
+    /* --- TAB NAVIGASI --- */
     .nav-toggle-container {
         display: flex; 
         background: white;
@@ -119,10 +119,11 @@
     .st-selesai { background: #f0fdf4; color: #16a34a; }
     .st-decline { background: #fef2f2; color: #dc2626; }
 
+    /* --- MODIFIKASI OFFICER INFO UNTUK MULTI-TAGS --- */
     .officer-info { 
-        display: flex; align-items: center; gap: 8px; margin-top: 10px; 
-        padding: 6px 12px; background: #f8fafc; width: fit-content; 
-        border-radius: 10px; font-size: 0.75rem; font-weight: 600; 
+        display: inline-flex; align-items: center; gap: 6px; 
+        padding: 4px 10px; background: #f8fafc; 
+        border-radius: 8px; font-size: 0.7rem; font-weight: 600; 
         border: 1px solid #e2e8f0; color: #475569;
     }
 
@@ -141,7 +142,6 @@
 @section('content')
 <div class="page-pengaduan">
     
-    {{-- HERO HEADER (IDENTIK DENGAN CREATE & GALERI) --}}
     <header class="hero-header" data-aos="fade-down">
         <div class="container">
             <h1 class="title-top">Riwayat</h1>
@@ -156,7 +156,6 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 
-                {{-- TAB NAVIGASI --}}
                 <div class="nav-toggle-container" data-aos="fade-up" data-aos-delay="100">
                     <a href="{{ route('pengaduan.create') }}" 
                        class="nav-toggle-btn {{ Request::routeIs('pengaduan.create') ? 'active' : 'inactive' }}">
@@ -168,7 +167,6 @@
                     </a>
                 </div>
 
-                {{-- TABLE CARD --}}
                 <div class="card custom-card p-4 p-md-5 mb-5" data-aos="fade-up" data-aos-delay="200">
                     <div class="form-section-title">
                         <i class="bi bi-list-stars"></i>
@@ -193,15 +191,25 @@
                                         <div class="mb-1" style="font-weight: 800; font-size: 1rem; color: #1e293b;">
                                             {{ $item->judul_pengaduan }}
                                         </div>
-                                        <div class="text-muted small d-flex align-items-center gap-2" style="font-size: 0.8rem;">
+                                        <div class="text-muted small d-flex align-items-center gap-2 mb-2" style="font-size: 0.8rem;">
                                             <i class="bi bi-calendar3"></i> 
                                             {{ \Carbon\Carbon::parse($item->tanggal_pengaduan)->translatedFormat('d M Y, H:i') }}
                                         </div>
                                         
-                                        @if($item->id_anggota)
-                                            <div class="officer-info">
-                                                <i class="bi bi-person-check-fill text-primary"></i>
-                                                <span>Teknisi: {{ $item->anggota->nama_anggota }}</span>
+                                        {{-- PERBAIKAN: MULTIPLE TEKNISI --}}
+                                        @if($item->anggotas->count() > 0)
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach($item->anggotas as $petugas)
+                                                    <div class="officer-info">
+                                                        <i class="bi bi-person-check-fill text-primary"></i>
+                                                        <span>{{ $petugas->nama_anggota }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="officer-info" style="background: #fff1f2; border-color: #fecaca; color: #991b1b;">
+                                                <i class="bi bi-person-x-fill"></i>
+                                                <span>Belum ada teknisi</span>
                                             </div>
                                         @endif
                                     </td>
@@ -209,6 +217,7 @@
                                         @php
                                             $status = match($item->status_pengaduan) {
                                                 'Baru' => ['c' => 'st-baru', 'i' => 'bi-asterisk'],
+                                                'Pending' => ['c' => 'st-proses', 'i' => 'bi-pause-circle'],
                                                 'Dalam Proses' => ['c' => 'st-proses', 'i' => 'bi-gear-wide-connected'],
                                                 'Selesai' => ['c' => 'st-selesai', 'i' => 'bi-check-circle-fill'],
                                                 'Decline' => ['c' => 'st-decline', 'i' => 'bi-x-circle-fill'],
@@ -221,9 +230,9 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="d-flex justify-content-end">
-                                            <button class="btn-detail" title="Lihat Detail">
+                                            <a href="{{ route('pengaduan.show', $item->id_pengaduan) }}" class="btn-detail" title="Lihat Detail">
                                                 <i class="bi bi-arrow-right-short fs-4"></i>
-                                            </button>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>

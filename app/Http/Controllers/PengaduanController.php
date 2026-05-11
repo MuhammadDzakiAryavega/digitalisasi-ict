@@ -10,22 +10,22 @@ use Illuminate\Support\Facades\Storage;
 
 class PengaduanController extends Controller
 {
-    // --- KHUSUS WARGA (Hanya melihat Riwayat Pengaduan miliknya sendiri) ---
+    // --- KHUSUS WARGA (Riwayat Pengaduan Sendiri) ---
     public function index()
     {
-        // Mengambil data pengaduan yang emailnya sama dengan email user yang login
-        $pengaduans = Pengaduan::with('anggota')
+        // Kita panggil relasi 'anggotas' karena satu laporan bisa banyak petugas
+        $pengaduans = Pengaduan::with('anggotas')
             ->where('email_pengadu', Auth::user()->email) 
-            ->orderBy('tanggal_pengaduan', 'desc') // Diubah ke desc supaya laporan terbaru muncul paling atas
+            ->orderBy('tanggal_pengaduan', 'desc')
             ->get();
 
         return view('public.layanan.riwayat', compact('pengaduans'));
     }
 
-    // --- KHUSUS ADMIN (Melihat semua Pengaduan) ---
+    // --- KHUSUS ADMIN (Kelola Semua Pengaduan) ---
     public function indexAdmin(Request $request)
     {
-        $query = Pengaduan::with('anggota');
+        $query = Pengaduan::with('anggotas');
 
         // Filter Pencarian
         if ($request->filled('search')) {
@@ -41,14 +41,52 @@ class PengaduanController extends Controller
         }
 
         $pengaduans = $query->orderBy('tanggal_pengaduan', 'desc')->get();
-        
-        // Ambil data anggota untuk dropdown di Modal Update Admin
         $anggotas = Anggota::all();
 
         return view('admin.kelola_pengaduan.index', compact('pengaduans', 'anggotas'));
     }
 
-    // Fungsi Store (Warga melapor)
+    // --- UPDATE STATUS & PENUGASAN (BAGIAN PALING PENTING) ---
+    public function updateStatus(Request $request, $id)
+{
+    // 1. Validasi input
+    $request->validate([
+        'status_pengaduan' => 'required',
+        'id_anggota'       => 'required|array', // Harus array karena pilih banyak
+    ]);
+
+    // 2. Cari data pengaduan
+    $pengaduan = Pengaduan::findOrFail($id);
+    
+    // 3. Update status di tabel pengaduans
+    $pengaduan->update([
+        'status_pengaduan' => $request->status_pengaduan,
+    ]);
+
+    // 4. Sinkronisasi anggota ke tabel pivot
+    // Fungsi sync() akan otomatis menghapus anggota lama dan menggantinya dengan yang baru dipilih
+    $pengaduan->anggotas()->sync($request->id_anggota);
+
+    return redirect()->back()->with('success', 'Status pengaduan dan tim IT berhasil diperbarui!');
+    } 
+
+    // --- DETAIL PENGADUAN ---
+    // --- DETAIL PENGADUAN ---
+    public function show($id){
+    // Ambil data pengaduan beserta teknisinya
+    $pengaduan = Pengaduan::with('anggotas')->where('id_pengaduan', $id)->firstOrFail();
+    
+    // CEK ROLE LOGIN
+    // Jika yang login memiliki role admin, arahkan ke folder admin
+    if (auth()->user()->role === 'admin') {
+        return view('admin.kelola_pengaduan.show', compact('pengaduan'));
+    }
+
+    // Jika bukan admin (berarti warga/user), arahkan ke folder public
+    return view('public.layanan.show', compact('pengaduan'));
+    }
+    
+    // --- SISANYA (Store & Destroy) TETAP SAMA ---
     public function store(Request $request)
     {
         $request->validate([
@@ -65,11 +103,10 @@ class PengaduanController extends Controller
 
         Pengaduan::create([
             'nama_pengadu'      => Auth::user()->name,
-            'email_pengadu'     => Auth::user()->email, // Ini kunci untuk filter di fungsi index()
+            'email_pengadu'     => Auth::user()->email,
             'no_hp_pengadu'     => $request->no_hp_pengadu,
             'judul_pengaduan'   => $request->judul_pengaduan,
             'isi_pengaduan'     => $request->isi_pengaduan,
-            'id_anggota'        => null,
             'tanggal_pengaduan' => now(),
             'status_pengaduan'  => 'Baru',
             'url_lampiran'      => $path,
@@ -77,42 +114,13 @@ class PengaduanController extends Controller
 
         return redirect()->route('pengaduan.index')->with('success', 'Pengaduan berhasil dikirim!');
     }
-
-    // Update Status & Penugasan Anggota (Admin)
-    public function updateStatus(Request $request, $id)
-{
-    $request->validate([
-        'status_pengaduan' => 'required|in:Baru,Pending,Dalam Proses,Selesai,Decline',
-        'id_anggota'       => 'nullable|exists:anggotas,id_anggota',
-    ]);
-
-    $pengaduan = Pengaduan::where('id_pengaduan', $id)->firstOrFail();
-    
-    $pengaduan->update([
-        'status_pengaduan' => $request->status_pengaduan,
-        'id_anggota'       => $request->id_anggota,
-    ]);
-
-    return redirect()->back()->with('success', 'Status pengaduan berhasil diperbarui.');
-}
-
-    // Fungsi Destroy (Admin)
     public function destroy($id)
     {
         $pengaduan = Pengaduan::where('id_pengaduan', $id)->firstOrFail();
-        
         if ($pengaduan->url_lampiran) {
             Storage::disk('public')->delete($pengaduan->url_lampiran);
         }
-
         $pengaduan->delete();
         return redirect()->back()->with('success', 'Data pengaduan berhasil dihapus!');
     }
-
-    public function show($id)
-{
-    // Menggunakan firstOrFail agar jika ID tidak ada, muncul error 404 bukan crash
-    $pengaduan = Pengaduan::with('anggota')->where('id_pengaduan', $id)->firstOrFail();
-    return view('admin.kelola_pengaduan.show', compact('pengaduan'));
-}
 }
