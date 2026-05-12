@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Unit IT - Digitalisasi Pelayanan')</title>
     
-    <!-- CSS Dependencies -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -103,10 +102,10 @@
 
         /* --- STYLING FOOTER BARU --- */
         .app-footer {
-            background-color: #0f172a; /* Biru gelap menyesuaikan tema IT */
+            background-color: #0f172a;
             color: #cbd5e1;
             position: relative;
-            margin-top: 0px; /* Memberi ruang untuk banner melayang */
+            margin-top: 0px;
             padding-top: 60px;
         }
 
@@ -193,7 +192,6 @@
             color: #ffc107;
         }
 
-        /* Kontak & Nomor Penting */
         .contact-item {
             display: flex;
             align-items: flex-start;
@@ -205,47 +203,6 @@
             font-size: 1.2rem;
             color: #3b82f6;
             margin-top: 3px;
-        }
-
-        .important-numbers .number-box {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.02);
-            transition: all 0.3s ease;
-        }
-
-        .important-numbers .number-box:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .important-numbers .number-box span {
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        /* Social Media */
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-            border-radius: 8px;
-            margin-right: 8px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .social-links a:hover {
-            background-color: #0061ff;
-            transform: translateY(-3px);
         }
 
         /* Footer Bottom */
@@ -277,7 +234,6 @@
 </head>
 <body>
 
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center me-4" href="{{ url('/') }}">
@@ -309,7 +265,6 @@
                                 <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Akun Saya</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <!-- FORM LOGOUT DIUBAH DISINI -->
                                     <form action="{{ route('logout') }}" method="POST" id="logout-form-front">
                                         @csrf
                                         <button type="button" onclick="confirmLogoutFront()" class="dropdown-item text-danger d-flex align-items-center" style="border: none; background: none; width: 100%;">
@@ -325,18 +280,15 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main style="padding-top: 80px;"> 
         @yield('content')
     </main>
 
-    <!-- FOOTER -->
     <footer class="app-footer">
         <div class="container">
             <div class="row gy-5">
                 
-                <!-- Kolom 1: Profil Unit IT -->
-                <div class="col-lg-4 col-md-6 pe-lg-4">
+                <div class="col-lg-5 col-md-12 pe-lg-4">
                     <h4 class="text-white fw-bold d-flex align-items-center mb-3 footer-logo">
                         <i class="bi bi-cpu-fill me-2"></i> Unit IT
                     </h4>
@@ -357,8 +309,7 @@
                     </div>
                 </div>
 
-                <!-- Kolom 2: Menu Utama -->
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <h5>Menu Utama</h5>
                     <ul class="footer-links">
                         <li><a href="{{ url('/') }}"><i class="bi bi-chevron-right"></i> Beranda</a></li>
@@ -368,8 +319,7 @@
                     </ul>
                 </div>
 
-                <!-- Kolom 3: Layanan IT -->
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <h5>Layanan IT</h5>
                     <ul class="footer-links">
                         <li><a href="{{ route('pengaduan.create') }}"><i class="bi bi-chevron-right"></i> Sistem Pengaduan (Ticketing)</a></li>
@@ -380,35 +330,8 @@
                     </ul>
                 </div>
 
-                <!-- Kolom 4: Nomor Penting & Sosial Media -->
-                <div class="col-lg-3 col-md-6">
-                    <h5>Kontak Darurat IT</h5>
-                    <div class="important-numbers mb-4">
-                        <div class="number-box">
-                            <div>Tim Jaringan</div>
-                            <span>(0751) 12345</span>
-                        </div>
-                        <div class="number-box">
-                            <div>Tim Software</div>
-                            <span>(0751) 12346</span>
-                        </div>
-                        <div class="number-box">
-                            <div>Helpdesk Pusat</div>
-                            <span>(0823) 1111-2222</span>
-                        </div>
-                    </div>
-
-                    <h5 class="mb-3">Ikuti Kami</h5>
-                    <div class="social-links">
-                        <a href=""><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-instagram"></i></a>
-                        <a href=""><i class="bi bi-youtube"></i></a>
-                    </div>
-                </div>
-
             </div>
 
-            <!-- Bagian Hak Cipta -->
             <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center text-center">
                 <div class="mb-3 mb-md-0">
                     &copy; {{ date('Y') }} <strong>Unit IT</strong>. Hak Cipta Dilindungi.
@@ -421,10 +344,8 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- TAMBAHKAN SWEETALERT2 DISINI -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>

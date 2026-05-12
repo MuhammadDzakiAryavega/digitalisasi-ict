@@ -204,8 +204,7 @@
     }
 
     .scroll-to-top:hover {
-        background-color: #ffffff;
-        color: #0061ff;
+        background-color: #1a1a1a;
         transform: translateY(-5px);
     }
 

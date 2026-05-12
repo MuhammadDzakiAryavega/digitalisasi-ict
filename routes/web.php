@@ -17,14 +17,16 @@ Route::get('/', function () {
     return view('halamanutama');
 })->name('home');
 
-Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri.index');
-
 Route::get('/tentang', function () {
-    return view('public.tentangs.tentang'); 
+    return view('public.tentangs.tentang');
 })->name('tentangs.tentang');
 
-Route::get('/galeri/{id_kegiatan}', [GaleriController::class, 'show'])->name('galeri.show');
-Route::post('/galeri/{id}/view', [GaleriController::class, 'incrementViews']);
+// Galeri Publik
+Route::prefix('galeri')->name('galeri.')->group(function () {
+    Route::get('/', [GaleriController::class, 'index'])->name('index');
+    Route::get('/{id_kegiatan}', [GaleriController::class, 'show'])->name('show');
+    Route::post('/{id}/view', [GaleriController::class, 'incrementViews']);
+});
 
 // --- 2. GUEST AREA (Login & Register) ---
 Route::middleware('guest')->group(function () {
@@ -34,35 +36,31 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-
 // --- 3. AUTH AREA (Wajib Login) ---
 Route::middleware('auth')->group(function () {
-    
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // --- FITUR LAYANAN USER (Warga) ---
-    // Nama rute otomatis diawali: pengaduan.
     Route::prefix('layanan')->name('pengaduan.')->group(function () {
         Route::get('/pengaduan', function () {
             return view('public.layanan.layanan');
         })->name('create');
-        
+
         Route::get('/riwayat', [PengaduanController::class, 'index'])->name('index');
-        Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('store');
-        
-        // PERBAIKAN: Menambahkan rute show agar route('pengaduan.show') bisa ditemukan
         Route::get('/riwayat/{id}', [PengaduanController::class, 'show'])->name('show');
+        Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('store');
+        Route::delete('/pengaduan/{id}', [PengaduanController::class, 'destroy'])->name('destroy');
     });
 
     // --- AREA ADMIN ---
-    // Nama rute otomatis diawali: admin.
     Route::prefix('admin')->name('admin.')->group(function () {
-        
+
         // Dashboard Admin
         Route::get('/halamanutama', [AuthController::class, 'adminDashboard'])->name('halamanutama');
 
-        // Kelola Galeri (admin.galeri.index)
-        Route::prefix('kelola_galeri')->name('galeri.')->group(function () {
+        // Kelola Galeri
+        Route::prefix('kelola-galeri')->name('galeri.')->group(function () {
             Route::get('/', [GaleriController::class, 'indexGaleri'])->name('index');
             Route::get('/create', [GaleriController::class, 'createGaleri'])->name('create');
             Route::post('/store', [GaleriController::class, 'storeGaleri'])->name('store');
@@ -71,20 +69,20 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{galeri}', [GaleriController::class, 'destroyGaleri'])->name('destroy');
         });
 
-        // Kelola Pengaduan Admin (admin.pengaduan.index)
+        // Kelola Pengaduan Admin
         Route::prefix('pengaduan')->name('pengaduan.')->group(function () {
             Route::get('/', [PengaduanController::class, 'indexAdmin'])->name('index');
             Route::get('/{id}', [PengaduanController::class, 'show'])->name('show');
-            Route::delete('/{id}', [PengaduanController::class, 'destroy'])->name('destroy');
             Route::put('/{id}/status', [PengaduanController::class, 'updateStatus'])->name('update-status');
+            Route::delete('/{id}', [PengaduanController::class, 'destroy'])->name('destroy');
         });
 
-        // Kelola Anggota (admin.kelola-anggota.index)
+        // Kelola Anggota (Menggunakan Resource)
         Route::resource('kelola-anggota', AnggotaController::class)->parameters([
             'kelola-anggota' => 'anggota'
         ]);
 
-        // Kelola User (admin.kelola-user.index)
+        // Kelola User
         Route::prefix('kelola-user')->name('kelola-user.')->group(function () {
             Route::get('/', [AuthController::class, 'indexUser'])->name('index');
             Route::get('/create', [AuthController::class, 'createUser'])->name('create');
@@ -93,6 +91,5 @@ Route::middleware('auth')->group(function () {
             Route::put('/{user}', [AuthController::class, 'updateUser'])->name('update');
             Route::delete('/{user}', [AuthController::class, 'destroyUser'])->name('destroy');
         });
-
     });
 });

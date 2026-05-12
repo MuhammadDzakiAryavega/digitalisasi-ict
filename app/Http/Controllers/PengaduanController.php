@@ -117,10 +117,24 @@ class PengaduanController extends Controller
     public function destroy($id)
     {
         $pengaduan = Pengaduan::where('id_pengaduan', $id)->firstOrFail();
+
+        // [KEAMANAN TAMBAHAN] 
+        // Pastikan hanya status 'Baru' atau 'Pending' yang bisa dibatalkan dari sisi backend
+        if (!in_array($pengaduan->status_pengaduan, ['Baru', 'Pending'])) {
+            return redirect()->back()->with('error', 'Laporan yang sudah diproses tidak dapat dibatalkan!');
+        }
+
+        // Hapus file lampiran dari storage jika ada
         if ($pengaduan->url_lampiran) {
             Storage::disk('public')->delete($pengaduan->url_lampiran);
         }
+
+        // Hapus relasi pada tabel pivot (pengaduan_anggota) jika sudah terlanjur ada
+        $pengaduan->anggotas()->detach();
+
+        // Hapus data utama
         $pengaduan->delete();
-        return redirect()->back()->with('success', 'Data pengaduan berhasil dihapus!');
+
+        return redirect()->back()->with('success', 'Pengaduan berhasil dibatalkan dan dihapus!');
     }
 }

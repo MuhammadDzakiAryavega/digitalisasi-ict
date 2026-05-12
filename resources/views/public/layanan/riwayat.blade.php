@@ -127,6 +127,7 @@
         border: 1px solid #e2e8f0; color: #475569;
     }
 
+    /* --- STYLE TOMBOL AKSI --- */
     .btn-detail { 
         width: 42px; height: 42px; display: flex; align-items: center; 
         justify-content: center; border-radius: 12px; background: #f1f5f9; 
@@ -134,6 +135,16 @@
     }
     .btn-detail:hover { 
         background: linear-gradient(135deg, #0061ff 0%, #004ecc 100%); 
+        color: #fff; transform: scale(1.1);
+    }
+
+    .btn-batal { 
+        width: 42px; height: 42px; display: flex; align-items: center; 
+        justify-content: center; border-radius: 12px; background: #fef2f2; 
+        color: #dc2626; border: none; transition: all 0.3s ease; 
+    }
+    .btn-batal:hover { 
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); 
         color: #fff; transform: scale(1.1);
     }
 </style>
@@ -196,7 +207,6 @@
                                             {{ \Carbon\Carbon::parse($item->tanggal_pengaduan)->translatedFormat('d M Y, H:i') }}
                                         </div>
                                         
-                                        {{-- PERBAIKAN: MULTIPLE TEKNISI --}}
                                         @if($item->anggotas->count() > 0)
                                             <div class="d-flex flex-wrap gap-1">
                                                 @foreach($item->anggotas as $petugas)
@@ -229,7 +239,21 @@
                                         </div>
                                     </td>
                                     <td class="text-end">
-                                        <div class="d-flex justify-content-end">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            
+                                            {{-- TOMBOL BATAL (Hanya muncul jika status Baru atau Pending) --}}
+                                            @if(in_array($item->status_pengaduan, ['Baru', 'Pending']))
+                                                <!-- Pastikan route 'pengaduan.destroy' sesuai dengan nama route hapus/batal di controller Anda -->
+                                                <form action="{{ route('pengaduan.destroy', $item->id_pengaduan) }}" method="POST" id="form-batal-{{ $item->id_pengaduan }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn-batal" title="Batalkan Pengaduan" onclick="confirmBatal('{{ $item->id_pengaduan }}')">
+                                                        <i class="bi bi-x-lg fs-5"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            {{-- TOMBOL DETAIL --}}
                                             <a href="{{ route('pengaduan.show', $item->id_pengaduan) }}" class="btn-detail" title="Lihat Detail">
                                                 <i class="bi bi-arrow-right-short fs-4"></i>
                                             </a>
@@ -259,6 +283,9 @@
 
 @push('scripts')
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<!-- Memastikan SweetAlert2 dipanggil (Hapus jika sudah dipanggil di layout master 'layouts.app') -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         AOS.init({ 
@@ -266,5 +293,24 @@
             once: true 
         });
     });
+
+    // FUNGSI KONFIRMASI BATAL
+    function confirmBatal(id) {
+        Swal.fire({
+            title: 'Batalkan Pengaduan?',
+            text: "Laporan yang dibatalkan akan dihapus dan tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Batalkan!',
+            cancelButtonText: 'Tutup',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-batal-' + id).submit();
+            }
+        });
+    }
 </script>
 @endpush
