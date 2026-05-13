@@ -4,10 +4,11 @@
 
 @push('styles')
 <style>
-    /* --- CSS DASAR --- */
+    /* --- CSS DASAR & TABEL --- */
     .card-custom { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); background: #ffffff; }
     .btn-gradient { background: linear-gradient(135deg, #0061ff 0%, #60efff 100%); border: none; color: white; transition: all 0.3s ease; font-weight: bold; }
     .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 97, 255, 0.3); color: white; }
+    
     .table thead th { background-color: #f8f9fc; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; color: #858796; padding: 1.25rem; border-bottom: 1px solid #e3e6f0; }
     .table tbody td { padding: 1.25rem; vertical-align: middle; color: #5a5c69; transition: all 0.2s; }
     .table tbody tr:hover td { background-color: #f8faff; }
@@ -20,24 +21,40 @@
     .status-selesai { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; } 
     .status-decline { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
-    /* --- TABLE TAGS --- */
+    /* --- TAGS DI TABEL --- */
     .anggota-wrapper { display: flex; flex-wrap: wrap; gap: 4px; max-width: 200px; }
     .anggota-tag { background-color: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #e2e8f0; font-weight: 500; display: inline-flex; align-items: center; }
+    
     .action-btn { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s; border: none; text-decoration: none; }
     .btn-view { background-color: #f0fdf4; color: #16a34a; }
     .btn-edit { background-color: #eef2ff; color: #4338ca; }
     .btn-delete { background-color: #fff1f2; color: #be123c; }
 
-    /* --- CUSTOM CHECKBOX AREA --- */
+    /* --- CUSTOM CHECKBOX AREA (GAMBAR 5 STYLE) --- */
     .checkbox-scroll-area {
-        border: 1px solid #dee2e6;
-        border-radius: 10px;
-        padding: 10px 15px;
-        max-height: 150px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px;
+        max-height: 210px; /* Batasi tinggi agar muncul scroll jika data banyak */
         overflow-y: auto;
-        background-color: #f8f9fc;
+        background-color: #ffffff;
     }
-    .form-check-label { cursor: pointer; color: #475569; font-size: 0.9rem; }
+    
+    /* Scrollbar minimalis */
+    .checkbox-scroll-area::-webkit-scrollbar { width: 5px; }
+    .checkbox-scroll-area::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+    .form-check-custom {
+        padding: 8px 10px;
+        border-radius: 8px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+    }
+    .form-check-custom:hover { background-color: #f8faff; }
+    
+    .form-check-input { width: 1.1rem; height: 1.1rem; cursor: pointer; margin-top: 0; }
+    .form-check-label { cursor: pointer; margin-left: 10px; color: #475569; font-size: 0.9rem; font-weight: 500; width: 100%; user-select: none; }
 </style>
 @endpush
 
@@ -141,31 +158,33 @@
                             </td>
                         </tr>
 
+                        {{-- MODAL UPDATE --}}
                         <div class="modal fade" id="modalUpdate{{ $item->id_pengaduan }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content shadow-lg">
+                                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                                     <form action="{{ route('admin.pengaduan.update-status', $item->id_pengaduan) }}" method="POST">
                                         @csrf @method('PUT')
-                                        <div class="modal-header border-0 px-4 mt-2">
-                                            <h5 class="fw-bold">Update Laporan #{{ $item->id_pengaduan }}</h5>
+                                        <div class="modal-header border-0 px-4 pt-4 pb-0">
+                                            <h5 class="fw-bold text-dark">Update Laporan #{{ $item->id_pengaduan }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
-                                        <div class="modal-body p-4 pt-0">
+                                        <div class="modal-body p-4">
                                             
-                                            {{-- CHECKBOX MULTIPLE SELECT AREA --}}
+                                            {{-- TUGASKAN TIM IT (SCROLLABLE LIST) --}}
                                             <div class="mb-4">
-                                                <div class="d-flex justify-content-between align-items-end mb-2">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <label class="form-label fw-bold small text-muted text-uppercase mb-0">Tugaskan Tim IT</label>
-                                                    <small class="text-primary" style="font-size: 0.7rem; font-weight: bold;">*Bisa pilih >1</small>
+                                                    <span class="text-primary fw-bold" style="font-size: 0.7rem;">*Bisa pilih >1</span>
                                                 </div>
-                                                <div class="checkbox-scroll-area">
+                                                <div class="checkbox-scroll-area shadow-sm">
                                                     @foreach($anggotas as $agt)
-                                                        <div class="form-check mb-2">
-                                                            <input class="form-check-input shadow-sm" type="checkbox" name="id_anggota[]" 
+                                                        <div class="form-check-custom mb-1">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                                name="id_anggota[]" 
                                                                 value="{{ $agt->id_anggota }}" 
                                                                 id="chk_{{ $item->id_pengaduan }}_{{ $agt->id_anggota }}"
                                                                 {{ $item->anggotas->contains('id_anggota', $agt->id_anggota) ? 'checked' : '' }}>
-                                                            <label class="form-check-label user-select-none" for="chk_{{ $item->id_pengaduan }}_{{ $agt->id_anggota }}">
+                                                            <label class="form-check-label" for="chk_{{ $item->id_pengaduan }}_{{ $agt->id_anggota }}">
                                                                 {{ $agt->nama_anggota }}
                                                             </label>
                                                         </div>
@@ -173,9 +192,10 @@
                                                 </div>
                                             </div>
 
+                                            {{-- STATUS SELECTION --}}
                                             <div class="mb-2">
                                                 <label class="form-label fw-bold small text-muted text-uppercase">Status Pengerjaan</label>
-                                                <select name="status_pengaduan" class="form-select" style="border-radius: 10px; height: 45px;">
+                                                <select name="status_pengaduan" class="form-select" style="border-radius: 10px; height: 48px; border: 1px solid #e2e8f0;">
                                                     @foreach(['Baru', 'Pending', 'Dalam Proses', 'Selesai', 'Decline'] as $st)
                                                         <option value="{{ $st }}" {{ $item->status_pengaduan == $st ? 'selected' : '' }}>{{ $st }}</option>
                                                     @endforeach
@@ -183,7 +203,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0 p-4 pt-0">
-                                            <button type="submit" class="btn btn-gradient w-100 py-3 rounded-3">Simpan Perubahan</button>
+                                            <button type="submit" class="btn btn-gradient w-100 py-3 rounded-3 shadow-sm">Simpan Perubahan</button>
                                         </div>
                                     </form>
                                 </div>
@@ -210,7 +230,9 @@
         });
 
         // Alert auto-hide
-        setTimeout(() => { $('.alert').fadeOut(); }, 4000);
+        setTimeout(() => { 
+            $('.alert').fadeOut('slow'); 
+        }, 4000);
     });
 </script>
 @endpush
